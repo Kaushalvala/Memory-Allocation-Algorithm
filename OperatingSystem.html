@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic Input Boxes</title>
+    <!-- Add Tailwind CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body
+    class="flex flex-col justify-center items-center p-8 bg-gradient-to-b from-black to-gray-800 text-white overflow-x-hidden"
+  >
+    <div
+      class="flex flex-col justify-center items-center border border-white p-8 rounded-lg bg-gray-900"
+    >
+      <h1 class="text-3xl font-bold mb-4">INNOVATIVE ASSIGNMENT</h1>
+      <h1 class="text-xl mb-2">Memory Management</h1>
+      <h2 class="text-lg mb-2">Name: Parthivsinh Vaghela</h2>
+      <h2 class="text-lg mb-2">Roll: 22BCE369</h2>
+      <h2 class="text-lg">Subject: Operating System</h2>
+    </div>
+
+    <div class="mt-16 pt-16 flex justify-center items-center gap-4 flex-wrap">
+      <label class="text-white">Total Number Of Memory Spaces:</label>
+      <input
+        type="number"
+        id="numOfMemories"
+        min="1"
+        placeholder="Enter number of memories (greater than 0)"
+        class="p-2 text-gray-800 rounded border border-white focus:outline-none focus:border-blue-500"
+      />
+      <button
+        onclick="addMemoryInputs()"
+        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Done
+      </button>
+    </div>
+
+    <div class="flex items-center justify-center flex-wrap">
+      <div id="memoryInputs"></div>
+    </div>
+
+    <div class="flex justify-center items-center gap-4 flex-wrap mt-8">
+      <label class="text-white">Total Number Of Processes:</label>
+
+      <input
+        type="number"
+        id="numOfValues"
+        min="1"
+        placeholder="Enter number of values (greater than 0)"
+        class="p-2 text-gray-800 rounded border border-white focus:outline-none focus:border-blue-500"
+      />
+      <button
+        onclick="addValueInputs()"
+        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Done
+      </button>
+    </div>
+
+    <div id="valueInputs"></div>
+
+    <div class="flex justify-center items-center gap-4 flex-wrap mt-8">
+      <button
+        onclick="storeValues()"
+        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Store Values
+      </button>
+      <!-- <button
+        onclick="firstFit()"
+        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        First Fit
+      </button>
+      <button
+        onclick="nextFit()"
+        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Next Fit
+      </button>
+      <button
+        onclick="bestFit()"
+        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Best Fit
+      </button>
+      <button
+        onclick="worstFit()"
+        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Worst Fit
+      </button> -->
+      <button
+        onclick="doAnalysis()"
+        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+      >
+        Analysis Button
+      </button>
+    </div>
+    <div class="pt-8 gap-4">
+      <div class="border border-gray-400 p-4">
+        <label>First Fit:</label>
+        <div id="ff1">
+          <div id="ff2" class="flex flex-row"></div>
+        </div>
+      </div>
+      <div class="border border-gray-400 p-4">
+        <label>Next Fit:</label>
+        <div id="nf1">
+          <div id="nf2" class="flex flex-row"></div>
+        </div>
+      </div>
+      <div class="border border-gray-400 p-4">
+        <label>Best Fit:</label>
+        <div id="bf1">
+          <div id="bf2" class="flex flex-row"></div>
+        </div>
+      </div>
+      <div class="border border-gray-400 p-4">
+        <label>Worst Fit:</label>
+        <div id="wf1">
+          <div id="wf2" class="flex flex-row"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="analysisTable" class="mt-8">
+      <table class="w-full">
+        <thead>
+          <tr>
+            <th class="border px-4 py-2">Type</th>
+            <th class="border px-4 py-2">Size Of Max Hole</th>
+            <th class="border px-4 py-2">Size of Min Hole</th>
+            <th class="border px-4 py-2">Non Allocated Processes</th>
+            <th class="border px-4 py-2">Total Free Memory</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="border px-4 py-2">FirstFit</td>
+            <td class="border px-4 py-2" id="ffMaxHole"></td>
+            <td class="border px-4 py-2" id="ffMinHole"></td>
+            <td class="border px-4 py-2" id="ffNAProcesses"></td>
+            <td class="border px-4 py-2" id="ffFreeMemory"></td>
+          </tr>
+          <tr>
+            <td class="border px-4 py-2">NextFit</td>
+            <td class="border px-4 py-2" id="nfMaxHole"></td>
+            <td class="border px-4 py-2" id="nfMinHole"></td>
+            <td class="border px-4 py-2" id="nfNAProcesses"></td>
+            <td class="border px-4 py-2" id="nfFreeMemory"></td>
+          </tr>
+          <tr>
+            <td class="border px-4 py-2">BestFit</td>
+            <td class="border px-4 py-2" id="bfMaxHole"></td>
+            <td class="border px-4 py-2" id="bfMinHole"></td>
+            <td class="border px-4 py-2" id="bfNAProcesses"></td>
+            <td class="border px-4 py-2" id="bfFreeMemory"></td>
+          </tr>
+          <tr>
+            <td class="border px-4 py-2">WorstFit</td>
+            <td class="border px-4 py-2" id="wfMaxHole"></td>
+            <td class="border px-4 py-2" id="wfMinHole"></td>
+            <td class="border px-4 py-2" id="wfNAProcesses"></td>
+            <td class="border px-4 py-2" id="wfFreeMemory"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="flex items-center justify-center">
+        <label class="p-8 m-4">
+          The Best Algorithm For This Memory Configuration Is :
+        </label>
+        <div id="winner"></div>
+      </div>
+    </div>
+    <script>
+      const ff = {
+        MaH: 0,
+        MiH: 0,
+        TFS: 0,
+        NAP: [],
+      };
+      const nf = {
+        MaH: 0,
+        MiH: 0,
+        TFS: 0,
+        NAP: [],
+      };
+      const bf = {
+        MaH: 0,
+        MiH: 0,
+        TFS: 0,
+        NAP: [],
+      };
+      const wf = {
+        MaH: 0,
+        MiH: 0,
+        TFS: 0,
+        NAP: [],
+      };
+
+      const memoryValues = [];
+      const valueValues = [];
+
+      function doAnalysis() {
+        firstFit();
+        nextFit();
+        bestFit();
+        worstFit();
+        findWinner();
+        memoryValues.length = 0;
+        valueValues.length = 0;
+      }
+
+      function addMemoryInputs() {
+        const numOfMemories = document.getElementById("numOfMemories").value;
+        const memoryInputs = document.getElementById("memoryInputs");
+        memoryInputs.innerHTML = "";
+        for (let i = 1; i <= numOfMemories; i++) {
+          const input = document.createElement("input");
+          input.type = "text";
+          input.placeholder = "Memory " + i;
+          input.classList.add(
+            "p-2",
+            "rounded",
+            "border",
+            "border-gray-300",
+            "focus:outline-none",
+            "focus:border-blue-500",
+            "m-4",
+            "bg-gray-100",
+            "text-gray-800"
+          );
+
+          memoryInputs.appendChild(input);
+        }
+      }
+
+      function addValueInputs() {
+        const numOfValues = document.getElementById("numOfValues").value;
+        const valueInputs = document.getElementById("valueInputs");
+        valueInputs.innerHTML = "";
+        for (let i = 1; i <= numOfValues; i++) {
+          const input = document.createElement("input");
+          input.type = "number";
+          input.min = 1;
+          input.placeholder = "Value " + i;
+          input.classList.add(
+            "p-2",
+            "rounded",
+            "border",
+            "border-gray-300",
+            "focus:outline-none",
+            "focus:border-blue-500",
+            "m-4",
+            "bg-gray-100",
+            "text-gray-800"
+          );
+
+          valueInputs.appendChild(input);
+        }
+      }
+
+      function storeValues() {
+        const memoryInputs = document
+          .getElementById("memoryInputs")
+          .getElementsByTagName("input");
+        const valueInputs = document
+          .getElementById("valueInputs")
+          .getElementsByTagName("input");
+        for (let input of memoryInputs) {
+          memoryValues.push(parseInt(input.value));
+        }
+        for (let input of valueInputs) {
+          valueValues.push(parseInt(input.value));
+        }
+        console.log("Memory Values:", memoryValues);
+        console.log("Value Values:", valueValues);
+      }
+
+      function findWinner() {
+        const algorithms = ["First Fit", "Worst Fit", "Next Fit", "Best Fit"];
+        const objects = [ff, wf, nf, bf];
+
+        const minNAPSize = Math.min(...objects.map((obj) => obj.NAP.length));
+        const minNAPObjects = objects.filter(
+          (obj) => obj.NAP.length === minNAPSize
+        );
+
+        if (minNAPObjects.length === 1) {
+          const winner = minNAPObjects[0];
+          const winnerIndex = objects.indexOf(winner);
+          const winnerType = algorithms[winnerIndex];
+          document.getElementById("winner").innerText = winnerType;
+        } else {
+          let winners = minNAPObjects;
+          let winnerCriteria = "minimum NAP";
+
+          const maxMaH = Math.max(...winners.map((obj) => obj.MaH));
+          if (maxMaH > 0) {
+            winners = winners.filter((obj) => obj.MaH === maxMaH);
+            winnerCriteria = "maximum hole size";
+          }
+
+          if (winners.length > 1) {
+            const minMiH = Math.min(...winners.map((obj) => obj.MiH));
+            if (minMiH > 0) {
+              winners = winners.filter((obj) => obj.MiH === minMiH);
+              winnerCriteria = "minimum hole size";
+            }
+          }
+
+          if (winners.length > 1) {
+            const maxTFS = Math.max(...winners.map((obj) => obj.TFS));
+            winners = winners.filter((obj) => obj.TFS === maxTFS);
+            winnerCriteria = " total free memory";
+          }
+
+          if (winners.length > 1) {
+            const winnerNames = winners.map(
+              (obj) => algorithms[objects.indexOf(obj)]
+            );
+            document.getElementById("winner").innerText =
+              winnerNames.join(", ") + " based on " + winnerCriteria;
+          } else {
+            const winnerType = algorithms[objects.indexOf(winners[0])];
+            document.getElementById("winner").innerText =
+              winnerType + " based on " + winnerCriteria;
+          }
+        }
+      }
+
+      function eachExecution(
+        memorySizes,
+        proccesingArray,
+        processSizes,
+        tag1,
+        tag2
+      ) {
+        const array = [];
+        for (let i = 0; i < proccesingArray.length; i++) {
+          let subArray = proccesingArray[i].split(" | ");
+          array.push(subArray);
+        }
+
+        const mainDiv = document.getElementById(tag1);
+        const mainDiv2 = document.getElementById(tag2);
+
+        const label = document.createElement("label");
+        label.innerHTML = "Original Memory Configuration";
+        mainDiv2.appendChild(label);
+
+        for (let i = 0; i < memorySizes.length; i++) {
+          const innerDiv = document.createElement("div");
+          innerDiv.classList.add(
+            "m-2",
+            "p-2",
+            "border",
+            "border-gray-300",
+            "rounded"
+          );
+          innerDiv.innerHTML = memorySizes[i];
+          mainDiv2.append(innerDiv);
+        }
+
+        for (let i = 0; i < array.length; i++) {
+          const rowDiv = document.createElement("div");
+          rowDiv.classList.add("flex", "flex-row");
+
+          const labelDiv = document.createElement("div");
+          labelDiv.classList.add("m-2", "font-semibold");
+          labelDiv.innerHTML =
+            "Process Size: " + (i < processSizes.length ? processSizes[i] : "");
+          rowDiv.appendChild(labelDiv);
+
+          for (let j = 0; j < array[i].length - 1; j++) {
+            const innerDiv = document.createElement("div");
+            innerDiv.classList.add(
+              "m-2",
+              "p-2",
+              "border",
+              "border-gray-300",
+              "rounded"
+            );
+            innerDiv.innerHTML = array[i][j];
+            rowDiv.appendChild(innerDiv);
+          }
+
+          mainDiv.appendChild(rowDiv);
+        }
+
+        console.log("out processing Array ");
+      }
+
+      function removeAllocatedFromNonAllocated(
+        allocatedProcessesExe,
+        nonAllocatedProcessesExe
+      ) {
+        const updatedNonAllocatedProcessesExe = nonAllocatedProcessesExe.filter(
+          (item) => !allocatedProcessesExe.includes(item)
+        );
+        return [...new Set(updatedNonAllocatedProcessesExe)];
+      }
+
+      function firstFit() {
+        let memorySizes = [...memoryValues];
+        let memorySizes2 = [...memoryValues];
+        let processSizes = [...valueValues];
+        let allocation = new Array(processSizes.length).fill(-1);
+        let nonAllocatedProcessesExe = [];
+        let allocatedProcessesExe = [];
+        let proccesingArray = [];
+
+        for (let i = 0; i < processSizes.length; i++) {
+          for (let j = 0; j < memorySizes.length; j++) {
+            if (memorySizes[j] >= processSizes[i] && allocation[i] == -1) {
+              allocation[i] = j;
+              memorySizes[j] -= processSizes[i];
+              // printing start
+              let line = "";
+              for (let i = 0; i < memorySizes.length; i++) {
+                const value = memorySizes[i];
+                line += value + " | ";
+              }
+              // 100 500 200 300 600
+              // 100 | 288 | 200 | 300 | 600
+              // console.log(line);
+              proccesingArray.push(line);
+
+              allocatedProcessesExe.push(processSizes[i]);
+              break;
+            } else {
+              nonAllocatedProcessesExe.push(processSizes[i]);
+            }
+          }
+        }
+
+        console.log(memorySizes);
+        const updatedNonAllocatedProcessesExe = removeAllocatedFromNonAllocated(
+          allocatedProcessesExe,
+          nonAllocatedProcessesExe
+        );
+        console.log(updatedNonAllocatedProcessesExe);
+        const max_hole = Math.max(...memorySizes);
+        const min_hole = Math.min(...memorySizes);
+
+        const total_free_memory = memorySizes.reduce(
+          (accumulator, curr) => accumulator + curr,
+          0
+        );
+        console.log(max_hole, min_hole, total_free_memory);
+
+        const ffMaxHoleElement = document.getElementById("ffMaxHole");
+        const ffMinHoleElement = document.getElementById("ffMinHole");
+        const ffNAProcessesElement = document.getElementById("ffNAProcesses");
+        const ffFreeMemoryElement = document.getElementById("ffFreeMemory");
+
+        ffMaxHoleElement.textContent = max_hole;
+        ffMinHoleElement.textContent = min_hole;
+        ffNAProcessesElement.textContent =
+          updatedNonAllocatedProcessesExe.join(" , ");
+        ffFreeMemoryElement.textContent = total_free_memory;
+
+        ff.MaH = max_hole;
+        ff.MiH = min_hole;
+        ff.NAP = updatedNonAllocatedProcessesExe;
+        ff.TFS = total_free_memory;
+        eachExecution(
+          memorySizes2,
+          proccesingArray,
+          processSizes,
+          "ff1",
+          "ff2"
+        );
+      }
+
+      function nextFit() {
+        let memorySizes = [...memoryValues];
+        let memorySizes2 = [...memoryValues];
+        let processSizes = [...valueValues];
+        let allocation = new Array(processSizes.length).fill(-1);
+        let nonAllocatedProcessesExe = [];
+        let allocatedProcessesExe = [];
+        let proccesingArray = [];
+
+        let lastIndex = 0;
+        for (let i = 0; i < processSizes.length; i++) {
+          let j = lastIndex;
+          let found = false;
+          while (!found) {
+            if (memorySizes[j] >= processSizes[i]) {
+              allocation[i] = j;
+              memorySizes[j] -= processSizes[i];
+              lastIndex = j;
+              let line = "";
+              for (let k = 0; k < memorySizes.length; k++) {
+                const value = memorySizes[k];
+                line += value + " | ";
+              }
+              proccesingArray.push(line);
+              allocatedProcessesExe.push(processSizes[i]);
+              found = true;
+            } else {
+              j = (j + 1) % memorySizes.length;
+              if (j === lastIndex) {
+                nonAllocatedProcessesExe.push(processSizes[i]);
+                break;
+              }
+            }
+          }
+        }
+
+        console.log(memorySizes);
+        const updatedNonAllocatedProcessesExe = removeAllocatedFromNonAllocated(
+          allocatedProcessesExe,
+          nonAllocatedProcessesExe
+        );
+        const max_hole = Math.max(...memorySizes);
+        const min_hole = Math.min(...memorySizes);
+
+        const total_free_memory = memorySizes.reduce(
+          (accumulator, curr) => accumulator + curr,
+          0
+        );
+
+        const nfMaxHoleElement = document.getElementById("nfMaxHole");
+        const nfMinHoleElement = document.getElementById("nfMinHole");
+        const nfNAProcessesElement = document.getElementById("nfNAProcesses");
+        const nfFreeMemoryElement = document.getElementById("nfFreeMemory");
+
+        nfMaxHoleElement.textContent = max_hole;
+        nfMinHoleElement.textContent = min_hole;
+        nfNAProcessesElement.textContent =
+          updatedNonAllocatedProcessesExe.join(", ");
+        nfFreeMemoryElement.textContent = total_free_memory;
+
+        nf.MaH = max_hole;
+        nf.MiH = min_hole;
+        nf.NAP = updatedNonAllocatedProcessesExe;
+        nf.TFS = total_free_memory;
+        eachExecution(
+          memorySizes2,
+          proccesingArray,
+          processSizes,
+          "nf1",
+          "nf2"
+        );
+      }
+
+      // function nextFit() {
+      //   let memorySizes = [...memoryValues];
+      //   let memorySizes2 = [...memoryValues];
+      //   let processSizes = [...valueValues];
+      //   let allocation = new Array(processSizes.length).fill(-1);
+      //   let nonAllocatedProcessesExe = [];
+      //   let allocatedProcessesExe = [];
+      //   let proccesingArray = [];
+
+      //   let lastIndex = 0;
+      //   for (let i = 0; i < processSizes.length; i++) {
+      //     for (let j = lastIndex; j < memorySizes.length; j++) {
+      //       if (memorySizes[j] >= processSizes[i]) {
+      //         allocation[i] = j;
+      //         memorySizes[j] -= processSizes[i];
+      //         lastIndex = j;
+      //         let line = "";
+      //         for (let i = 0; i < memorySizes.length; i++) {
+      //           const value = memorySizes[i];
+      //           line += value + " | ";
+      //         }
+      //         proccesingArray.push(line);
+      //         allocatedProcessesExe.push(processSizes[i]);
+      //         break;
+      //       } else {
+      //         nonAllocatedProcessesExe.push(processSizes[i]);
+      //       }
+      //     }
+      //   }
+
+      //   console.log(memorySizes);
+      //   const updatedNonAllocatedProcessesExe = removeAllocatedFromNonAllocated(
+      //     allocatedProcessesExe,
+      //     nonAllocatedProcessesExe
+      //   );
+      //   const max_hole = Math.max(...memorySizes);
+      //   const min_hole = Math.min(...memorySizes);
+
+      //   const total_free_memory = memorySizes.reduce(
+      //     (accumulator, curr) => accumulator + curr,
+      //     0
+      //   );
+
+      //   const nfMaxHoleElement = document.getElementById("nfMaxHole");
+      //   const nfMinHoleElement = document.getElementById("nfMinHole");
+      //   const nfNAProcessesElement = document.getElementById("nfNAProcesses");
+      //   const nfFreeMemoryElement = document.getElementById("nfFreeMemory");
+
+      //   nfMaxHoleElement.textContent = max_hole;
+      //   nfMinHoleElement.textContent = min_hole;
+      //   nfNAProcessesElement.textContent =
+      //     updatedNonAllocatedProcessesExe.join(", ");
+      //   nfFreeMemoryElement.textContent = total_free_memory;
+
+      //   nf.MaH = max_hole;
+      //   nf.MiH = min_hole;
+      //   nf.NAP = updatedNonAllocatedProcessesExe;
+      //   nf.TFS = total_free_memory;
+      //   eachExecution(
+      //     memorySizes2,
+      //     proccesingArray,
+      //     processSizes,
+      //     "nf1",
+      //     "nf2"
+      //   );
+      // }
+
+      function bestFit() {
+        let memorySizes = [...memoryValues];
+        let memorySizes2 = [...memoryValues];
+        let processSizes = [...valueValues];
+        let allocation = new Array(processSizes.length).fill(-1);
+        let nonAllocatedProcessesExe = [];
+        let allocatedProcessesExe = [];
+        let proccesingArray = [];
+
+        for (let i = 0; i < processSizes.length; i++) {
+          let bestFitIndex = -1;
+          for (let j = 0; j < memorySizes.length; j++) {
+            if (memorySizes[j] >= processSizes[i]) {
+              if (
+                bestFitIndex == -1 ||
+                memorySizes[j] < memorySizes[bestFitIndex]
+              ) {
+                bestFitIndex = j;
+              }
+            }
+          }
+
+          if (bestFitIndex != -1) {
+            allocation[i] = bestFitIndex;
+            memorySizes[bestFitIndex] -= processSizes[i];
+            allocatedProcessesExe.push(processSizes[i]);
+
+            let line = "";
+            for (let i = 0; i < memorySizes.length; i++) {
+              const value = memorySizes[i];
+              line += value + " | ";
+            }
+
+            proccesingArray.push(line);
+          } else {
+            nonAllocatedProcessesExe.push(processSizes[i]);
+          }
+        }
+
+        const updatedNonAllocatedProcessesExe = removeAllocatedFromNonAllocated(
+          allocatedProcessesExe,
+          nonAllocatedProcessesExe
+        );
+        console.log(updatedNonAllocatedProcessesExe);
+        const max_hole = Math.max(...memorySizes);
+        const min_hole = Math.min(...memorySizes);
+
+        const total_free_memory = memorySizes.reduce(
+          (accumulator, curr) => accumulator + curr,
+          0
+        );
+
+        const bfMaxHoleElement = document.getElementById("bfMaxHole");
+        const bfMinHoleElement = document.getElementById("bfMinHole");
+        const bfNAProcessesElement = document.getElementById("bfNAProcesses");
+        const bfFreeMemoryElement = document.getElementById("bfFreeMemory");
+
+        bfMaxHoleElement.textContent = max_hole;
+        bfMinHoleElement.textContent = min_hole;
+        bfNAProcessesElement.textContent =
+          updatedNonAllocatedProcessesExe.join(", ");
+        bfFreeMemoryElement.textContent = total_free_memory;
+
+        bf.MaH = max_hole;
+        bf.MiH = min_hole;
+        bf.NAP = updatedNonAllocatedProcessesExe;
+        bf.TFS = total_free_memory;
+
+        eachExecution(
+          memorySizes2,
+          proccesingArray,
+          processSizes,
+          "bf1",
+          "bf2"
+        );
+      }
+
+      function worstFit() {
+        let memorySizes = [...memoryValues];
+        let memorySizes2 = [...memoryValues];
+        let processSizes = [...valueValues];
+        let allocation = new Array(processSizes.length).fill(-1);
+        let nonAllocatedProcessesExe = [];
+        let allocatedProcessesExe = [];
+        let proccesingArray = [];
+
+        for (let i = 0; i < processSizes.length; i++) {
+          let worstFitIndex = -1;
+          for (let j = 0; j < memorySizes.length; j++) {
+            if (memorySizes[j] >= processSizes[i]) {
+              if (
+                worstFitIndex == -1 ||
+                memorySizes[j] > memorySizes[worstFitIndex]
+              ) {
+                worstFitIndex = j;
+              }
+            }
+          }
+
+          if (worstFitIndex != -1) {
+            allocation[i] = worstFitIndex;
+            memorySizes[worstFitIndex] -= processSizes[i];
+            allocatedProcessesExe.push(processSizes[i]);
+
+            let line = "";
+            for (let i = 0; i < memorySizes.length; i++) {
+              const value = memorySizes[i];
+              line += value + " | ";
+            }
+            console.log(line);
+
+            proccesingArray.push(line);
+          } else {
+            nonAllocatedProcessesExe.push(processSizes[i]);
+          }
+        }
+        const updatedNonAllocatedProcessesExe = removeAllocatedFromNonAllocated(
+          allocatedProcessesExe,
+          nonAllocatedProcessesExe
+        );
+        const max_hole = Math.max(...memorySizes);
+        const min_hole = Math.min(...memorySizes);
+
+        const total_free_memory = memorySizes.reduce(
+          (accumulator, curr) => accumulator + curr,
+          0
+        );
+
+        const wfMaxHoleElement = document.getElementById("wfMaxHole");
+        const wfMinHoleElement = document.getElementById("wfMinHole");
+        const wfNAProcessesElement = document.getElementById("wfNAProcesses");
+        const wfFreeMemoryElement = document.getElementById("wfFreeMemory");
+
+        wfMaxHoleElement.textContent = max_hole;
+        wfMinHoleElement.textContent = min_hole;
+        wfNAProcessesElement.textContent =
+          updatedNonAllocatedProcessesExe.join(", ");
+        wfFreeMemoryElement.textContent = total_free_memory;
+
+        wf.MaH = max_hole;
+        wf.MiH = min_hole;
+        wf.NAP = updatedNonAllocatedProcessesExe;
+        wf.TFS = total_free_memory;
+
+        eachExecution(
+          memorySizes2,
+          proccesingArray,
+          processSizes,
+          "wf1",
+          "wf2"
+        );
+      }
+    </script>
+  </body>
+</html>
